@@ -1,0 +1,54 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: Liar's Dice API
+meta:
+  id: wrk_45e3f7fc0860412881d39e4388ba3d6e
+  created: 1769088965404
+  modified: 1769088965404
+  description: ""
+collection:
+  - url: https://localhost:8080/api/games
+    name: Create Game
+    meta:
+      id: req_2c4775ecdad544fbbbc6ac561d6466af
+      created: 1769088995664
+      modified: 1769089347922
+      isPrivate: false
+      description: ""
+      sortKey: -1769088995664
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+          "maxPlayers": 4,
+          "dicePerPlayer": 5
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/12.3.0
+        description: ""
+        disabled: false
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_3358017fc197912e00992474afb9c1c590356bb0
+    created: 1769088965408
+    modified: 1769088965408
+environments:
+  name: Base Environment
+  meta:
+    id: env_3358017fc197912e00992474afb9c1c590356bb0
+    created: 1769088965406
+    modified: 1769088965406
+    isPrivate: false
