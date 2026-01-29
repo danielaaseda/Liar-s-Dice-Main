@@ -23,6 +23,8 @@ app.use("/acc", authRoutes);
 
 app.use(express.static("Public"));
 
+app.use("/Documentation", express.static("Documentation"));
+
 app.get("/dicecolour", diceColourChange, (req, res, next) =>{
   res.json ({message: "Colour Changed.", dice: req.dice});
 });

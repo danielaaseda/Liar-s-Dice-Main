@@ -2,7 +2,7 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "diceGenerator.js",
+  "main": "liars_dice.js",
   "scripts": {
     "test": "echo && exit 1",
     "start": "node localHost.mjs"

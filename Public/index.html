@@ -3,10 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="stylegit .css">
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
     <h1>Hello World!</h1>
+    <section id="account-ui">
+  <h2>Account</h2>
+  <input id="username" placeholder="Username" />
+  <input id="password" type="password" placeholder="Password" />
+  <input id="diceColor" type="color" value="#FF5733" />
+
+  <div>
+    <button id="btn-signup">Create Account</button>
+    <button id="btn-login">Login</button>
+    <button id="btn-delete">Delete Account</button>
+  </div>
+
+  <p id="status" role="status"></p>
+</section>
+<script src="liars_dice.js"></script>
+
+<button id="tos-open" type="button">Read Terms of Service</button>
+
+<label>
+  <input type="checkbox" id="tos-check" />
+  I accept the Terms of Service
+</label>
+
+<div id="tos-modal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Terms of Service</h3>
+    <pre id="tos-text">Loading…</pre>
+    <button id="tos-close" type="button">Close</button>
+  </div>
+</div>
+
 </body>
 </html>
