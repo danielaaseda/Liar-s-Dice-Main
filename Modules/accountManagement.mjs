@@ -83,7 +83,7 @@ router.delete("/me", (req, res) => {
   });
 });
 
-router.put("/me", (req, res) => {
+router.put("/editme", (req, res) => {
   const userId = req.session?.user?.id;
   const {username, password, email} = req.body;
   const user = users.find(u => u.id === userId);
