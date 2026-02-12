@@ -1,9 +1,148 @@
+
+body {
+  font-family: 'Pirata One', 'Cinzel Decorative', serif;
+  background: radial-gradient(circle at top, #044b25 0%, #082b16 80%);
+  color: #ffffff;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+main {
+  width: 80%;
+  max-width: 900px;
+  padding: 20px;
+}
+
+.card {
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #d4af37;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+
+h1, h2, h3 {
+  text-align: center;
+  color: #d4af37;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 3px #000;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-weight: bold;
+  margin-top: 6px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  padding: 8px;
+  font-size: 1rem;
+  border: 2px solid #d4af37;
+  border-radius: 5px;
+  background: #1b3f25;
+  color: #fff;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: #ffda44;
+  box-shadow: 0 0 5px #ffda44a0;
+}
+
+button {
+  background: linear-gradient(145deg, #c7a029, #8a6f1f);
+  border: 2px solid #d4af37;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 700;
+  padding: 10px 15px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  background: linear-gradient(145deg, #ffda44, #b48a1f);
+  color: #000;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #ffda44a0;
+}
+
+#result {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid #d4af37;
+  border-radius: 5px;
+  color: #ffda44;
+  padding: 10px;
+  white-space: pre-wrap;
+  min-height: 60px;
+}
+
+#status {
+  font-weight: bold;
+  margin-top: 6px;
+}
+
 .modal.hidden { display: none; }
 .modal {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
   display: flex; align-items: center; justify-content: center;
 }
 .modal-content {
-  background: #fff; padding: 16px; max-width: 700px; width: 90%;
-  max-height: 80vh; overflow: auto; border-radius: 8px;
+  background: #1b3f25;
+  padding: 16px;
+  max-width: 700px; width: 90%;
+  max-height: 80vh;
+  overflow: auto;
+  border-radius: 8px;
+  border: 2px solid #d4af37;
+  color: #fff;
+}
+#dashboard-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+#delete-btn {
+  background: linear-gradient(145deg, #b91d1d, #6a0e0e);
+  border-color: #ff4a4a;
+}
+#delete-btn:hover {
+  background: linear-gradient(145deg, #e02d2d, #8a0f0f);
+  color: #fff;
+}
+#dice-area {
+  text-align: center;
+  margin: 20px 0;
+}
+
+#player-dice {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.die {
+  font-size: 2rem;
+  padding: 10px 15px;
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  background: #1b3f25;
+  box-shadow: 0 0 6px rgba(0,0,0,0.6);
 }

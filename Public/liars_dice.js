@@ -43,6 +43,7 @@ const attachViewLogic = (viewName) => {
     case "login": bindLogin(); break;
     case "edit": bindEdit(); break;
     case "dashboard": bindDashboard(); break;
+    case "game": bindGame(); break;
   }
 };
 
@@ -159,7 +160,8 @@ function bindEdit() {
 
 function bindDashboard() {
   const logoutBtn = document.getElementById("logout-btn");
-  const editBtn = document.getElementById("edit-btn");
+  const editBtn   = document.getElementById("edit-btn");
+  const startGameBtn = document.getElementById("start-game-btn");
 
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
@@ -173,13 +175,37 @@ function bindDashboard() {
     });
   }
 
-  if (editBtn) {
-    editBtn.addEventListener("click", () => {
-      loadView("edit");
-    });
-  }
+  if (editBtn) editBtn.addEventListener("click", () => loadView("edit"));
 
+  if (startGameBtn)
+    startGameBtn.addEventListener("click", () => loadView("game"));
   checkLoginStatus?.();
 }
+function bindGame() {
+  const backBtn = document.getElementById("back-dashboard-btn");
+  const rollBtn = document.getElementById("roll-btn");
+  const playerName = document.getElementById("player-name");
+  const diceArea = document.getElementById("player-dice");
+  const log = document.getElementById("game-log");
+
+  const username = sessionStorage.getItem("username") || "Player";
+  playerName.textContent = username;
+
+  const createDice = (count = 5) => {
+    return Array.from({ length: count }, () =>
+      Math.ceil(Math.random() * 6)
+    );
+  };
+
+  rollBtn.addEventListener("click", () => {
+    const dice = createDice();
+    diceArea.innerHTML =
+      dice.map(d => `<span class="die">🎲 ${d}</span>`).join(" ");
+    log.textContent += `You rolled: ${dice.join(", ")}\n`;
+  });
+
+  backBtn.addEventListener("click", () => loadView("dashboard"));
+}
+
 
 loadView("login");
