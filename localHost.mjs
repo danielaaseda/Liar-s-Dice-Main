@@ -1,6 +1,6 @@
 import express from "express";
 import { diceColourChange } from "./Modules/diceColour.mjs"
-import authRoutes from "./Modules/accountManagement.mjs"
+import authRoutes from "./Routes/accountManagement.mjs"
 import session from "express-session";
 import { confirmLogin } from "./Modules/confirm.mjs";
 

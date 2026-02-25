@@ -1,13 +1,15 @@
 <h2>Create User</h2>
 <form>
   <label>Username</label>
-  <input name="username" type="text"required />
+  <input name="username" type="text" required />
   <label>Email</label>
   <input name="email" type="email" required />
   <label>Password</label>
   <input name="password" type="password" required />
   <section class="tos">
-    <button id="tos-open" type="button">Read Terms of Service</button>
+    <a href="/Documentation/TermsOfService.md" target="_blank">
+      Read Terms of Service
+    </a>
     <label>
       <input type="checkbox" id="tos-check" required />
       I accept the Terms of Service
@@ -15,12 +17,5 @@
   </section>
   <button type="submit">Create Account</button>
 </form>
-<div id="tos-modal" class="modal hidden">
-  <div class="modal-content">
-    <h3>Terms of Service</h3>
-    <pre id="tos-text">Loading…</pre>
-    <button id="tos-close" type="button">Close</button>
-  </div>
-</div>
 <pre id="result"></pre>
 <p id="status" role="status"></p>
