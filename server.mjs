@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import { diceColourChange } from "./Modules/DiceColour.mjs"
 import authRoutes from "./Routes/accountManagement.mjs"
