@@ -16,9 +16,9 @@ app.use(
 );
 app.use(express.json());
 
-app.get('/', (req, res, next) => {
+/*app.get('/', (req, res, next) => {
   res.send('Server Kjører!')
-});
+});*/
 app.use("/acc", authRoutes);
 
 app.use(express.static("Public"));
