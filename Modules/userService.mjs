@@ -1,74 +1,122 @@
+import pool from "../db.mjs";
+import fs from "fs";
 
-let users = [];
-let nextUserId = 1;
 
-export function signup({ username, password, email, tos }) {
+const createUserQuery = fs.readFileSync(
+  new URL("../Database/Users/createUser.sql", import.meta.url),
+  "utf8"
+);
+
+const getUserByUsernameQuery = fs.readFileSync(
+  new URL("../Database/Users/getUserByUsername.sql", import.meta.url),
+  "utf8"
+);
+
+const getUserByIdQuery = fs.readFileSync(
+  new URL("../Database/Users/getUserById.sql", import.meta.url),
+  "utf8"
+);
+
+const deleteUserQuery = fs.readFileSync(
+  new URL("../Database/Users/deleteUser.sql", import.meta.url),
+  "utf8"
+);
+
+const updateUserQuery = fs.readFileSync(
+  new URL("../Database/Users/updateUser.sql", import.meta.url),
+  "utf8"
+);
+
+const listUsersQuery = fs.readFileSync(
+  new URL("../Database/Users/listUsers.sql", import.meta.url),
+  "utf8"
+);
+
+
+export async function signup({ username, password, email, tos }) {
   if (!username || !password || !email)
     throw new Error("Username, password and email required");
 
   if (tos !== true)
     throw new Error("You must accept the Terms of Service.");
 
-  if (!email.includes("@"))
-    throw new Error("Invalid email");
+  const existing = await pool.query(
+    getUserByUsernameQuery,
+    [username]
+  );
 
-  const existing = users.find(u => u.username === username);
-  if (existing)
+  if (existing.rows.length > 0)
     throw new Error("Username already taken");
 
-  const newUser = {
-    id: nextUserId++,
-    username,
-    password,
-    email,
-    consent: {
-      tosAccepted: new Date().toISOString()
-    }
-  };
+  const result = await pool.query(
+    createUserQuery,
+    [username, email, password] 
+  );
 
-  users.push(newUser);
-  return { success: true };
+  return result.rows[0];
 }
 
-export function login({ username, password }) {
-  const user = users.find(u => u.username === username && u.password === password);
-  if (!user) throw new Error("Wrong username or password");
+
+export async function login({ username, password }) {
+  const result = await pool.query(
+    getUserByUsernameQuery,
+    [username]
+  );
+
+  if (result.rows.length === 0)
+    throw new Error("Wrong username or password");
+
+  const user = result.rows[0];
+
+  if (user.password !== password)
+    throw new Error("Wrong username or password");
 
   return { id: user.id, username: user.username };
 }
 
-export function deleteUser(userId) {
-  const index = users.findIndex(u => u.id === userId);
-  if (index === -1) throw new Error("User not found");
-  users.splice(index, 1);
-  return { success: true };
-}
 
-export function editUser(userId, { username, email, password }) {
-  const user = users.find(u => u.id === userId);
-  if (!user) throw new Error("User not found");
+export async function deleteUser(userId) {
+  const result = await pool.query(
+    deleteUserQuery,
+    [userId]
+  );
 
-  if (username) {
-    const taken = users.some(u => u.username === username && u.id !== userId);
-    if (taken) throw new Error("Name taken");
-    user.username = username;
-  }
-
-  if (email) user.email = email;
-  if (password) user.password = password;
+  if (result.rowCount === 0)
+    throw new Error("User not found");
 
   return { success: true };
 }
 
-export function listUsers() {
-  return users.map(u => ({
-    id: u.id,
-    username: u.username,
-    email: u.email,
-    createdAt: u.consent?.tosAccepted
-  }));
+
+export async function editUser(userId, { username, email, password }) {
+  const existing = await pool.query(
+    getUserByIdQuery,
+    [userId]
+  );
+
+  if (existing.rows.length === 0)
+    throw new Error("User not found");
+
+  await pool.query(
+    updateUserQuery,
+    [username, email, password, userId]
+  );
+
+  return { success: true };
 }
 
-export function getUser(userId) {
-  return users.find(u => u.id === userId) || null;
+
+export async function listUsers() {
+  const result = await pool.query(listUsersQuery);
+  return result.rows;
+}
+
+
+export async function getUser(userId) {
+  const result = await pool.query(
+    getUserByIdQuery,
+    [userId]
+  );
+
+  return result.rows[0] || null;
 }

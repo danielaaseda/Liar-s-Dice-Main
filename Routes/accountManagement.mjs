@@ -1,4 +1,3 @@
-
 import express from "express";
 import { confirmLogin } from "../Modules/confirm.mjs";
 import {
@@ -9,20 +8,21 @@ import {
   listUsers,
   getUser
 } from "../Modules/userService.mjs";
+
 const router = express.Router();
 
-router.post("/signup", (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
-    const result = signup(req.body);
+    const result = await signup(req.body);
     res.status(201).json(result);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
   try {
-    const sessionUser = login(req.body);
+    const sessionUser = await login(req.body);
     req.session.user = sessionUser;
     res.json({ success: true });
   } catch (err) {
@@ -34,32 +34,42 @@ router.get("/logout", (req, res) => {
   req.session.destroy(() => res.json({ success: true }));
 });
 
-router.delete("/me", confirmLogin, (req, res) => {
+router.delete("/me", confirmLogin, async (req, res) => {
   try {
     const userId = req.session.user.id;
-    const result = deleteUser(userId);
+    const result = await deleteUser(userId);
     req.session.destroy(() => res.json(result));
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-router.put("/editme", confirmLogin, (req, res) => {
+router.put("/editme", confirmLogin, async (req, res) => {
   try {
     const userId = req.session.user.id;
-    const result = editUser(userId, req.body);
+    const result = await editUser(userId, req.body);
     res.json(result);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
-router.get("/currentUser", confirmLogin, (req, res) => {
-  const user = getUser(req.session.user.id);
-  res.json(user);
+router.get("/currentUser", confirmLogin, async (req, res) => {
+  try {
+    const user = await getUser(req.session.user.id);
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
-router.get("/UList", confirmLogin, (req, res) => {
-  res.json(listUsers());
+router.get("/UList", confirmLogin, async (req, res) => {
+  try {
+    const users = await listUsers();
+    res.json(users);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
+
 export default router;
