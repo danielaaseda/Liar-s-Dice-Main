@@ -1,4 +1,3 @@
-// Modules/userService.mjs
 
 let users = [];
 let nextUserId = 1;
