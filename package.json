@@ -5,7 +5,7 @@
   "main": "liars_dice.js",
   "scripts": {
     "test": "echo && exit 1",
-    "start": "node localHost.mjs"
+    "start": "node localhost.mjs"
   },
   "keywords": [],
   "author": "",
