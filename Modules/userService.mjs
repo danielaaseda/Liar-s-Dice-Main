@@ -34,7 +34,6 @@ const listUsersQuery = fs.readFileSync(
 
 
 export async function signup({ username, password, email, tos }) {
-  console.log({ username, email, password, tos });
   if (!username || !password || !email)
     throw new Error("Username, password and email required");
 
