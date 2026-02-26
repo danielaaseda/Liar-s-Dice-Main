@@ -16,7 +16,7 @@ router.post("/signup", async (req, res) => {
     const result = await signup(req.body);
     res.status(201).json(result);
   } catch (err) {
-    //console.error("FULL ERROR:", err);
+    console.error("FULL ERROR:", err);
     res.status(400).json({ error: err.message });
   }
 });
