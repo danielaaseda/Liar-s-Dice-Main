@@ -149,4 +149,8 @@ function bindGame() {
   $("#back-dashboard-btn").addEventListener("click", () => loadView("dashboard"));
 }
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service_worker.js");
+}
+
 loadView("login");

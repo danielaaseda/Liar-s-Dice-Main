@@ -1,0 +1,8 @@
+{
+  "MISSING_FIELDS": "Username and password required",
+  "USERNAME_TAKEN": "Username already taken",
+  "INVALID_CREDENTIALS": "Invalid username or password",
+  "USER_NOT_FOUND": "User not found",
+  "NOT_AUTHENTICATED": "Not authenticated",
+  "SERVER_ERROR": "Server error"
+}
