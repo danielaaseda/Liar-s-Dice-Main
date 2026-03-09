@@ -4,5 +4,6 @@
   "INVALID_CREDENTIALS": "Feil brukernavn eller passord",
   "USER_NOT_FOUND": "Bruker ikke funnet",
   "NOT_AUTHENTICATED": "Ikke autentisert",
-  "SERVER_ERROR": "Serverfeil"
+  "SERVER_ERROR": "Serverfeil",
+  "TOS_REQ": "Du mår akseptere vilkår for bruk."
 }

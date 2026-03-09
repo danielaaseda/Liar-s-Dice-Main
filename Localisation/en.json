@@ -4,5 +4,6 @@
   "INVALID_CREDENTIALS": "Invalid username or password",
   "USER_NOT_FOUND": "User not found",
   "NOT_AUTHENTICATED": "Not authenticated",
-  "SERVER_ERROR": "Server error"
+  "SERVER_ERROR": "Server error",
+  "TOS_REQ": "You must accept the Terms of Service."
 }
