@@ -5,5 +5,7 @@
   "USER_NOT_FOUND": "User not found",
   "NOT_AUTHENTICATED": "Not authenticated",
   "SERVER_ERROR": "Server error",
-  "TOS_REQ": "You must accept the Terms of Service."
+  "TOS_REQ": "You must accept the Terms of Service.",
+  "NOT_YOUR_TURN": "It is not your turn.",
+  "INVALID_BID": "Your bid is invalid"
 }

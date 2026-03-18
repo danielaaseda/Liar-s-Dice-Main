@@ -4,6 +4,7 @@ import { diceColourChange } from "./Modules/DiceColour.mjs"
 import authRoutes from "./Routes/accountManagement.mjs"
 import session from "express-session";
 import { confirmLogin } from "./Modules/confirm.mjs";
+import gameRoutes from "./Routes/gameRoutes.mjs";
 
 const app = express()
 const port = 8080
@@ -22,6 +23,8 @@ app.use("/acc", authRoutes);
 app.use(express.static("Public"));
 
 app.use("/Documentation", express.static("Documentation"));
+
+app.use("/game", gameRoutes);
 
 app.use("/dicecolour", diceColourChange, (req, res, next) =>{
   res.json ({message: "Colour Changed.", dice: req.dice});

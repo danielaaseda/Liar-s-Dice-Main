@@ -136,17 +136,88 @@ function bindDashboard() {
 }
 
 function bindGame() {
+
   const log = $("#game-log");
   const diceArea = $("#player-dice");
-  $("#player-name").textContent = sessionStorage.getItem("username") || "Player";
-  const rollDice = () =>
-    Array.from({ length: 5 }, () => Math.ceil(Math.random() * 6));
-  $("#roll-btn").addEventListener("click", () => {
-    const dice = rollDice();
-    diceArea.innerHTML = dice.map(n => `<span class="die">🎲 ${n}</span>`).join("");
-    log.textContent += `You rolled: ${dice.join(", ")}\n`;
-  });
+
+  $("#player-name").textContent =
+    sessionStorage.getItem("username") || "Player";
+
+  async function startGame() {
+
+    const res = await fetch("/game/start", { method: "POST" });
+    const data = await res.json();
+
+    showDice(data.dice);
+
+    log.textContent = "Game started! Place your first bid.\n";
+  }
+
+  function showDice(dice) {
+    diceArea.innerHTML =
+      dice.map(n => `<span class="die">🎲 ${n}</span>`).join("");
+  }
+
+  async function placeBid() {
+
+    const quantity = $("#bid-quantity").value;
+    const value = $("#bid-value").value;
+
+    if (!quantity || !value) {
+      log.textContent += "Enter quantity and value first.\n";
+      return;
+    }
+
+    const res = await fetch("/game/bid", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        quantity,
+        value
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      log.textContent += data.error + "\n";
+      return;
+    }
+
+    if (data.action === "bid") {
+      log.textContent +=
+        `Computer raised bid to ${data.bid.quantity} × ${data.bid.value}\n`;
+    }
+
+    if (data.action === "liar") {
+      log.textContent +=
+        `Computer called liar!\nBid: ${data.bid.quantity}×${data.bid.value}\nActual: ${data.actual}\n`;
+    }
+
+  }
+
+  async function callLiar() {
+
+    const res = await fetch("/game/liar", {
+      method: "POST"
+    });
+
+    const data = await res.json();
+
+    log.textContent +=
+      `Liar called!\nBid was ${data.bid.quantity}×${data.bid.value}\nActual dice: ${data.actual}\n`;
+  }
+
+  $("#roll-btn").addEventListener("click", startGame);
+
+  $("#bid-btn").addEventListener("click", placeBid);
+
+  $("#liar-btn").addEventListener("click", callLiar);
+
   $("#back-dashboard-btn").addEventListener("click", () => loadView("dashboard"));
+
 }
 
 if ("serviceWorker" in navigator) {

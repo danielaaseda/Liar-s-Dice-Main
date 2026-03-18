@@ -1,13 +1,32 @@
 <h2>Liar's Dice Game</h2>
-<section class="card" id="game-interface">
+
+<div class="game-container">
+
   <p>Welcome to the table, <span id="player-name"></span>!</p>
-  <div id="dice-area">
-    <p>🎲 Your dice:</p>
-    <div id="player-dice"></div>
-  </div>
-  <div id="game-buttons">
-    <button id="roll-btn">Roll Dice</button>
-    <button id="back-dashboard-btn">Back to Dashboard</button>
-  </div>
+
+  <h3>🎲 Your dice:</h3>
+  <div id="player-dice"></div>
+
+  <br>
+
+  <button id="roll-btn">Start Game</button>
+  <button id="back-dashboard-btn">Back to Dashboard</button>
+
+  <hr>
+
+  <h3>Make a Bid</h3>
+
+  <input id="bid-quantity" type="number" placeholder="Quantity">
+  <input id="bid-value" type="number" min="1" max="6" placeholder="Value">
+
+  <br><br>
+
+  <button id="bid-btn">Place Bid</button>
+  <button id="liar-btn">Call Liar</button>
+
+  <hr>
+
+  <h3>Game Log</h3>
   <pre id="game-log"></pre>
-</section>
+
+</div>
