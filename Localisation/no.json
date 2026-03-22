@@ -7,5 +7,7 @@
   "SERVER_ERROR": "Serverfeil",
   "TOS_REQ": "Du mår akseptere vilkår for bruk.",
   "NOT_YOUR_TURN": "Det er ikke din tur.",
-  "INVALID_BID": "Dette budet er ikke gyldig."
+  "INVALID_BID": "Dette budet er ikke gyldig.",
+  "INVALID_DICE_TYPE": "Denne terningen er ugyldig.",
+  "INVALID_DICE_COLOUR": "Denne fargen er ikke tilgjengelig."
 }

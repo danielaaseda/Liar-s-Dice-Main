@@ -1,9 +1,9 @@
 let game = null;
 
-function rollDice(amount = 5) {
+function rollDice(amount = 5, sides = 6) {
   const dice = [];
   for (let i = 0; i < amount; i++) {
-    dice.push(Math.floor(Math.random() * 6) + 1);
+    dice.push(Math.floor(Math.random() * sides) + 1);
   }
   return dice;
 }
@@ -20,19 +20,21 @@ function countDice(value) {
   return total;
 }
 
-export function startGame(playerId) {
+export function startGame(playerId, diceType, diceColour) {
 
   game = {
+    diceType,
+    diceColour,
     players: [
-      { id: playerId, dice: rollDice() },
-      { id: "computer", dice: rollDice() }
+      { id: playerId, dice: rollDice(5, diceType) },
+      { id: "computer", dice: rollDice(5, diceType) }
     ],
     currentBid: null,
     turn: playerId
   };
-
   return {
-    dice: game.players[0].dice
+    dice: game.players[0].dice,
+    colour: diceColour
   };
 }
 

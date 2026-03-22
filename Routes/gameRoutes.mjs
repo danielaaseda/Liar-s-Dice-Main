@@ -1,15 +1,20 @@
 import express from "express";
 import { startGame, placeBid, callLiar, getGame } from "../Modules/game.mjs";
 import { confirmLogin } from "../Modules/confirm.mjs";
+import { diceType } from "../Modules/diceType.mjs";
+import { diceColour } from "../Modules/DiceColour.mjs";
 
 const router = express.Router();
 
-router.post("/start", confirmLogin, (req, res) => {
+router.post("/start", confirmLogin, diceType, diceColour, (req, res) => {
 
-  const result = startGame(req.session.user.id);
+  const result = startGame(
+    req.session.user.id,
+    req.diceType,
+    req.diceColour
+  );
 
   res.json(result);
-
 });
 
 router.post("/bid", confirmLogin, (req, res) => {

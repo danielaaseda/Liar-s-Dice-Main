@@ -1,14 +1,20 @@
-export const diceColourChange = function (req, res, next){
-  if(!req.session?.dice){
-    return res.status(401).json("No Dice!");
+export function diceColour(req, res, next) {
+
+  let colour = req.body?.diceColour;
+
+  if (!colour) {
+    colour = "gold";
   }
-  if (req.body.dice && Array.isArray(req.body.dice)) {
-    const color = req.body.diceColor || req.user?.diceColor || '#FF5733';
-    
-    req.body.dice = req.body.dice.map(die => ({
-      ...die,
-      color: color
-    }));
+
+  const allowedColours = ["gold", "red", "blue", "green"];
+
+  if (!allowedColours.includes(colour)) {
+    return res.status(400).json({
+      error: "INVALID_DICE_COLOUR"
+    });
   }
+
+  req.diceColour = colour;
+
   next();
-};
+}

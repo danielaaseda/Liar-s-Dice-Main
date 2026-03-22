@@ -143,20 +143,39 @@ function bindGame() {
   $("#player-name").textContent =
     sessionStorage.getItem("username") || "Player";
 
-  async function startGame() {
+async function startGame() {
 
-    const res = await fetch("/game/start", { method: "POST" });
-    const data = await res.json();
+  const diceType = document.getElementById("dice-type").value;
+  const diceColour = document.getElementById("dice-colour").value;
 
-    showDice(data.dice);
+  const res = await fetch("/game/start", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      diceType,
+      diceColour
+    })
+  });
 
-    log.textContent = "Game started! Place your first bid.\n";
-  }
+  const data = await res.json();
 
-  function showDice(dice) {
-    diceArea.innerHTML =
-      dice.map(n => `<span class="die">🎲 ${n}</span>`).join("");
-  }
+  showDice(data.dice,data.colour);
+
+  log.textContent = `Game started with d${diceType} dice!\n`;
+
+}
+
+function showDice(dice, colour = "gold") {
+
+  diceArea.innerHTML =
+    dice.map(n =>
+      `<span class="die" style="border-color:${colour}; color:${colour}">
+        🎲 ${n}
+      </span>`
+    ).join("");
+}
 
   async function placeBid() {
 

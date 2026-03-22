@@ -7,5 +7,7 @@
   "SERVER_ERROR": "Server error",
   "TOS_REQ": "You must accept the Terms of Service.",
   "NOT_YOUR_TURN": "It is not your turn.",
-  "INVALID_BID": "Your bid is invalid"
+  "INVALID_BID": "Your bid is invalid",
+  "INVALID_DICE_TYPE": "This dice is invalid.",
+  "INVALID_DICE_COLOUR": "This is not a correct colour."
 }

@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express from "express";
-import { diceColourChange } from "./Modules/DiceColour.mjs"
+import { diceColour } from "./Modules/DiceColour.mjs"
 import authRoutes from "./Routes/accountManagement.mjs"
 import session from "express-session";
 import { confirmLogin } from "./Modules/confirm.mjs";
@@ -26,7 +26,7 @@ app.use("/Documentation", express.static("Documentation"));
 
 app.use("/game", gameRoutes);
 
-app.use("/dicecolour", diceColourChange, (req, res, next) =>{
+app.use("/dicecolour", diceColour, (req, res, next) =>{
   res.json ({message: "Colour Changed.", dice: req.dice});
 });
 app.get("/session", confirmLogin, (req, res) => {
