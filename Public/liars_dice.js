@@ -1,246 +1,232 @@
+const API_BASE_URL = "/acc";
 
-const API_BASE = "/acc";
+const getElement = (selector) => document.querySelector(selector);
 
-const $ = (sel) => document.querySelector(sel);
-const request = async (path, options = {}) => {
-  const res = await fetch(API_BASE + path, {
+async function sendApiRequest(endpoint, method = "GET", payload) {
+  const response = await fetch(API_BASE_URL + endpoint, {
+    method,
     headers: { "Content-Type": "application/json" },
-    ...options
+    body: payload ? JSON.stringify(payload) : undefined
   });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || data.message);
-  return data;
-};
-const showResult = (data) => {
-  const el = $("#result");
-  if (el) el.textContent = JSON.stringify(data, null, 2);
-};
-const setStatus = (msg, isError = false) => {
-  const el = $("#status");
-  if (!el) return;
-  el.textContent = msg;
-  el.style.color = isError ? "#b00020" : "#1a7f37";
+
+  const responseData = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(responseData.error || "Request failed");
+  }
+
+  return responseData;
+}
+
+function updateStatusMessage(message, isError = false) {
+  const statusElement = getElement("#status");
+  if (!statusElement) return;
+
+  statusElement.textContent = message;
+  statusElement.style.color = isError ? "red" : "green";
+}
+
+function displayJsonResult(data) {
+  const resultElement = getElement("#result");
+  if (resultElement) {
+    resultElement.textContent = JSON.stringify(data, null, 2);
+  }
+}
+
+const userApi = {
+  createAccount: (userData) => sendApiRequest("/signup", "POST", userData),
+  loginUser: (credentials) => sendApiRequest("/login", "POST", credentials),
+  updateAccount: (userData) => sendApiRequest("/editme", "PUT", userData),
+  deleteAccount: () => sendApiRequest("/me", "DELETE"),
+  logoutUser: () => sendApiRequest("/logout")
 };
 
-const userService = {
-  signup: (u) => request("/signup", { method: "POST", body: JSON.stringify(u) }),
-  login:  (c) => request("/login",  { method: "POST", body: JSON.stringify(c) }),
-  update: (u) => request("/editme", { method: "PUT",  body: JSON.stringify(u) }),
-  remove: () => request("/me",     { method: "DELETE" }),
-  logout: () => request("/logout", { method: "GET" })
-};
+async function loadPage(viewName) {
+  const htmlContent = await fetch(`/Views/${viewName}.html`).then(res => res.text());
+  getElement("#app").innerHTML = htmlContent;
 
-const loadView = async (name) => {
-  const html = await fetch(`/Views/${name}.html`).then(r => r.text());
-  $("#app").innerHTML = html;
-  attachViewLogic(name);
-};
-
-const attachViewLogic = (name) => {
-  const map = {
-    signup: bindSignup,
-    login: bindLogin,
-    edit: bindEdit,
-    dashboard: bindDashboard,
-    game: bindGame
+  const pageBindings = {
+    signup: setupSignupPage,
+    login: setupLoginPage,
+    edit: setupEditPage,
+    dashboard: setupDashboardPage,
+    game: setupGamePage
   };
-  map[name]?.();
-};
 
-function bindSignup() {
-  const form = document.querySelector("form");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const user = {
-      username: form.username.value.trim(),
-      email: form.email.value.trim(),
-      password: form.password.value,
-      tos: form.querySelector("#tos-check").checked
+  pageBindings[viewName]?.();
+}
+
+function setupSignupPage() {
+  const signupForm = getElement("form");
+
+  signupForm.onsubmit = async (event) => {
+    event.preventDefault();
+
+    const userData = {
+      username: signupForm.username.value.trim(),
+      email: signupForm.email.value.trim(),
+      password: signupForm.password.value,
+      acceptedTerms: getElement("#tos-check").checked
     };
+
     try {
-      const res = await userService.signup(user);
-      showResult(res);
-      setStatus("Account created successfully");
-      loadView("login");
-    } catch (err) {
-      setStatus(err.message, true);
-      showResult({ error: err.message });
+      await userApi.createAccount(userData);
+      updateStatusMessage("Account created successfully");
+      loadPage("login");
+    } catch (error) {
+      updateStatusMessage(error.message, true);
     }
-  });
-  document.getElementById("go-login")?.addEventListener("click", () => loadView("login"));
+  };
+
+  getElement("#go-login")?.onclick = () => loadPage("login");
 }
 
-function bindLogin() {
-  const form = $("form");
-  $("#go-signup")?.addEventListener("click", () => loadView("signup"));
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const creds = {
-      username: form.username.value.trim(),
-      password: form.password.value
+function setupLoginPage() {
+  const loginForm = getElement("form");
+
+  getElement("#go-signup")?.onclick = () => loadPage("signup");
+
+  loginForm.onsubmit = async (event) => {
+    event.preventDefault();
+
+    const loginData = {
+      username: loginForm.username.value.trim(),
+      password: loginForm.password.value
     };
+
     try {
-      const res = await userService.login(creds);
-      sessionStorage.setItem("username", creds.username);
-      showResult(res);
-      setStatus("Logged in");
-      loadView("dashboard");
-    } catch (e) {
-      setStatus(e.message, true);
+      await userApi.loginUser(loginData);
+      sessionStorage.setItem("username", loginData.username);
+
+      updateStatusMessage("Logged in successfully");
+      loadPage("dashboard");
+    } catch (error) {
+      updateStatusMessage(error.message, true);
     }
-  });
+  };
 }
 
-function bindEdit() {
-  const form = $("form");
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const user = {
-      username: form.username.value,
-      email: form.email.value,
-      password: form.password.value
+function setupEditPage() {
+  const editForm = getElement("form");
+
+  editForm.onsubmit = async (event) => {
+    event.preventDefault();
+
+    const updatedUserData = {
+      username: editForm.username.value,
+      email: editForm.email.value,
+      password: editForm.password.value
     };
+
     try {
-      const res = await userService.update(user);
-      setStatus("Account updated");
-      showResult(res);
-      loadView("dashboard");
-    } catch (e) {
-      setStatus(e.message, true);
+      await userApi.updateAccount(updatedUserData);
+      updateStatusMessage("Account updated");
+      loadPage("dashboard");
+    } catch (error) {
+      updateStatusMessage(error.message, true);
     }
-  });
-  $("#delete-btn")?.addEventListener("click", async () => {
+  };
+
+  getElement("#delete-btn")?.onclick = async () => {
     try {
-      await userService.remove();
-      setStatus("Account deleted");
-      loadView("login");
-    } catch (e) {
-      setStatus(e.message, true);
+      await userApi.deleteAccount();
+      updateStatusMessage("Account deleted");
+      loadPage("login");
+    } catch (error) {
+      updateStatusMessage(error.message, true);
     }
-  });
-  $("#go-back")?.addEventListener("click", () => loadView("dashboard"));
+  };
+
+  getElement("#go-back")?.onclick = () => loadPage("dashboard");
 }
 
-function bindDashboard() {
-  $("#logout-btn")?.addEventListener("click", async () => {
+function setupDashboardPage() {
+  getElement("#logout-btn")?.onclick = async () => {
     try {
-      await userService.logout();
-      setStatus("Logged out");
-      loadView("login");
-    } catch (e) {
-      setStatus(e.message, true);
+      await userApi.logoutUser();
+      updateStatusMessage("Logged out");
+      loadPage("login");
+    } catch (error) {
+      updateStatusMessage(error.message, true);
     }
-  });
-  $("#edit-btn")?.addEventListener("click", () => loadView("edit"));
-  $("#start-game-btn")?.addEventListener("click", () => loadView("game"));
+  };
+
+  getElement("#edit-btn")?.onclick = () => loadPage("edit");
+  getElement("#start-game-btn")?.onclick = () => loadPage("game");
 }
 
-function bindGame() {
+function setupGamePage() {
+  const gameLog = getElement("#game-log");
+  const playerDiceContainer = getElement("#player-dice");
 
-  const log = $("#game-log");
-  const diceArea = $("#player-dice");
-
-  $("#player-name").textContent =
+  getElement("#player-name").textContent =
     sessionStorage.getItem("username") || "Player";
 
-async function startGame() {
-
-  const diceType = document.getElementById("dice-type").value;
-  const diceColour = document.getElementById("dice-colour").value;
-
-  const res = await fetch("/game/start", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      diceType,
-      diceColour
-    })
-  });
-
-  const data = await res.json();
-
-  showDice(data.dice,data.colour);
-
-  log.textContent = `Game started with d${diceType} dice!\n`;
-
-}
-
-function showDice(dice, colour = "gold") {
-
-  diceArea.innerHTML =
-    dice.map(n =>
-      `<span class="die" style="border-color:${colour}; color:${colour}">
-        🎲 ${n}
+  function renderPlayerDice(diceValues, diceColor = "gold") {
+    playerDiceContainer.innerHTML = diceValues.map(value =>
+      `<span class="die" style="color:${diceColor}; border-color:${diceColor}">
+        🎲 ${value}
       </span>`
     ).join("");
-}
+  }
 
-  async function placeBid() {
+  async function startNewGame() {
+    const selectedDiceType = getElement("#dice-type").value;
+    const selectedDiceColor = getElement("#dice-colour").value;
 
-    const quantity = $("#bid-quantity").value;
-    const value = $("#bid-value").value;
+    const gameData = await sendApiRequest("/game/start", "POST", {
+      diceType: selectedDiceType,
+      diceColour: selectedDiceColor
+    });
 
-    if (!quantity || !value) {
-      log.textContent += "Enter quantity and value first.\n";
+    renderPlayerDice(gameData.dice, gameData.colour);
+    gameLog.textContent = `Game started with d${selectedDiceType}\n`;
+  }
+
+  async function submitPlayerBid() {
+    const bidQuantity = getElement("#bid-quantity").value;
+    const bidValue = getElement("#bid-value").value;
+
+    if (!bidQuantity || !bidValue) {
+      gameLog.textContent += "Please enter both quantity and value\n";
       return;
     }
 
-    const res = await fetch("/game/bid", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        quantity,
-        value
-      })
+    const bidResponse = await sendApiRequest("/game/bid", "POST", {
+      quantity: bidQuantity,
+      value: bidValue
     });
 
-    const data = await res.json();
-
-    if (data.error) {
-      log.textContent += data.error + "\n";
+    if (bidResponse.error) {
+      gameLog.textContent += bidResponse.error + "\n";
       return;
     }
 
-    if (data.action === "bid") {
-      log.textContent +=
-        `Computer raised bid to ${data.bid.quantity} × ${data.bid.value}\n`;
+    if (bidResponse.action === "bid") {
+      gameLog.textContent +=
+        `Computer bid ${bidResponse.bid.quantity} × ${bidResponse.bid.value}\n`;
     }
 
-    if (data.action === "liar") {
-      log.textContent +=
-        `Computer called liar!\nBid: ${data.bid.quantity}×${data.bid.value}\nActual: ${data.actual}\n`;
+    if (bidResponse.action === "liar") {
+      gameLog.textContent += "Computer called liar!\n";
     }
-
   }
 
-  async function callLiar() {
+  async function callLiarAction() {
+    const liarResult = await sendApiRequest("/game/liar", "POST");
 
-    const res = await fetch("/game/liar", {
-      method: "POST"
-    });
-
-    const data = await res.json();
-
-    log.textContent +=
-      `Liar called!\nBid was ${data.bid.quantity}×${data.bid.value}\nActual dice: ${data.actual}\n`;
+    gameLog.textContent +=
+      `Liar called!\nBid: ${liarResult.bid.quantity}×${liarResult.bid.value}\nActual: ${liarResult.actual}\n`;
   }
 
-  $("#roll-btn").addEventListener("click", startGame);
-
-  $("#bid-btn").addEventListener("click", placeBid);
-
-  $("#liar-btn").addEventListener("click", callLiar);
-
-  $("#back-dashboard-btn").addEventListener("click", () => loadView("dashboard"));
-
+  getElement("#roll-btn").onclick = startNewGame;
+  getElement("#bid-btn").onclick = submitPlayerBid;
+  getElement("#liar-btn").onclick = callLiarAction;
+  getElement("#back-dashboard-btn").onclick = () => loadPage("dashboard");
 }
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service_worker.js");
 }
 
-loadView("login");
+loadPage("login");
