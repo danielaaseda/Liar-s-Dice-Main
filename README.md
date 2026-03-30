@@ -4,3 +4,4 @@ You will also be albe to invite friends to play, aswell as being able to select 
 Project management: https://trello.com/b/P2QqH2Bo/liars-dice-feature-map
 Feature map: https://miro.com/app/board/uXjVGNfNyNc=/
 Link to app: https://liar-s-dice-main.onrender.com/
+The CSS code is made by AI
